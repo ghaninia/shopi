@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Shopi API
+servers:
+  - url: http://localhost
+paths:
+  /api/purchase-order/{productId}:
+    post:
+      summary: Create Purchase Order
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: user-id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrderRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrderResponse'
+  /api/products:
+    get:
+      summary: Get All Products
+      parameters:
+        - in: header
+          name: user-id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsResponse'
+
+components:
+  schemas:
+    PurchaseOrderRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+      required:
+        - quantity
+
+    PurchaseOrderResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+
+    ProductsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductItem'
+
+    ProductItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer

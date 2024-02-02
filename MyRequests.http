@@ -1,0 +1,11 @@
+GET http://localhost/api/products
+Content-Type: application/json
+
+###
+POST http://localhost/api/purchase-order/1
+Content-Type: application/json
+user-id: 1
+
+{
+  "quantity" : 1
+}

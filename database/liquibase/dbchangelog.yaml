@@ -1,0 +1,259 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table
+      author: Amin Ghaninia
+      description: Create users table
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: INT UNSIGNED
+              - column:
+                  name: name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: mobile
+                  type: VARCHAR(15)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: credit
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+        - tagDatabase:
+            tag: create-users-table
+      rollback:
+        - sql:
+            sql: drop table users;
+
+  - changeSet:
+      id: create-products-table
+      author: Amin Ghaninia
+      description: Create products table
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_products
+                  name: id
+                  type: INT UNSIGNED
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+        - tagDatabase:
+            tag: create-products-table
+      rollback:
+        - sql:
+            sql: drop table products;
+
+  - changeSet:
+      id: create-orders-table
+      author: Amin Ghaninia
+      description: Create orders table
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_orders
+                  name: id
+                  type: INT UNSIGNED
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orders_user_id
+                    references: users(id)
+              - column:
+                  name: total_price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: ENUM('PENDING', 'SUCCEED', 'FAILED')
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sku
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+        - tagDatabase:
+            tag: create-orders-table
+      rollback:
+        - sql:
+            sql: drop table orders;
+
+  - changeSet:
+      id: create-order_items-table
+      author: Amin Ghaninia
+      description: Create order_items table
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_orders
+                  name: id
+                  type: INT UNSIGNED
+              - column:
+                  name: order_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_order_items_order_id
+                    references: orders(id)
+              - column:
+                  name: product_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_order_items_product_id
+                    references: products(id)
+              - column:
+                  name: total_price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: count
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+        - tagDatabase:
+            tag: create-order-items-table
+      rollback:
+        - sql:
+            sql: drop table order_items;
+
+  - changeSet:
+      id: create-transactions-table
+      author: Amin Ghaninia
+      description: Create transactions table
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transactions
+                  name: id
+                  type: INT UNSIGNED
+              - column:
+                  name: order_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transactions_order_id
+                    references: orders(id)
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transactions_user_id
+                    references: users(id)
+              - column:
+                  name: price
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+        - tagDatabase:
+            tag: create-transactions-table
+      rollback:
+        - sql:
+            sql: drop table transactions;
+
+  - changeSet:
+      id: insert-default-user
+      author: Amin Ghaninia
+      changes:
+        - loadData:
+            file: ./seed/user_data.csv
+            separator: ','
+            tableName: users
+            encoding: UTF-8
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-default-product
+      author: Amin Ghaninia
+      changes:
+        - loadData:
+            file: ./seed/product_data.csv
+            separator: ','
+            tableName: products
+            encoding: UTF-8
+            relativeToChangelogFile: true
